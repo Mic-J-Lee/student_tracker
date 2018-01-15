@@ -16,16 +16,18 @@ ActiveRecord::Schema.define(version: 20180112220520) do
   enable_extension "plpgsql"
 
   create_table "assignments", force: :cascade do |t|
-    t.string "name"
+    t.bigint "student_id"
+    t.string "repo_name"
     t.string "completion"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["student_id"], name: "index_assignments_on_student_id"
   end
 
   create_table "students", force: :cascade do |t|
+    t.string "github_handle"
     t.string "first_name"
     t.string "last_name"
-    t.string "github_handle"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

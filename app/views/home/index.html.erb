@@ -1,1 +1,6 @@
-this is the homepage!
+<%@assignments.each do |assignment|%>
+  <div>
+   Repository name: <%=assignment.repo_name%>
+   Github User: <%=assignment.student.github_handle%>
+  </div>
+<%end%>

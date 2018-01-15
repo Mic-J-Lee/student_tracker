@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
   root to: 'home#index'
+
+  post '/payload', to: 'assignments#payload', as: 'payload'
+
+
   resources :students do
     resources :assignments
   end

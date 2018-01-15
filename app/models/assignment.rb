@@ -1,4 +1,6 @@
 class Assignment < ApplicationRecord
-  belongs_to :student
+  extend FriendlyId
+  friendly_id :repo_name
 
+  belongs_to :student
 end

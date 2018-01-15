@@ -1,5 +1,5 @@
 class AssignmentsController < ApplicationController
-  # before_action :set_assignment, only: [:show, :edit, :update, :destroy, :confirm, :assignment_rating, :add_rating]
+  before_action :set_assignment, only: [:show]
   skip_before_action :verify_authenticity_token, only: [:payload]
 
   def payload
@@ -26,10 +26,13 @@ class AssignmentsController < ApplicationController
     end
   end
 
-  # private
-  #   def set_assignment
-  #     @assignment = Assignment.find(params[:id])
-  #   end
+  def show
+  end
+
+  private
+    def set_assignment
+      @assignment = Assignment.friendly.find(params[:id])
+    end
   
 end
 

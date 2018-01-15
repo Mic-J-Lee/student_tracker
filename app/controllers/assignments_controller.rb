@@ -1,6 +1,7 @@
 class AssignmentsController < ApplicationController
   before_action :set_assignment, only: [:show]
   skip_before_action :verify_authenticity_token, only: [:payload]
+  rescue_from ActiveRecord::RecordNotFound, with: :incomplete
 
   def payload
     puts 'this works from github!'
@@ -27,6 +28,10 @@ class AssignmentsController < ApplicationController
   end
 
   def show
+  end
+
+  def incomplete
+    render 'incomplete'
   end
 
   private

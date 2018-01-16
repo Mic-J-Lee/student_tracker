@@ -4,3 +4,9 @@
    Github User: <%=assignment.student.github_handle%>
   </div>
 <%end%>
+<%@students.each do |student|%>
+  <div>
+   Github handle: <%=student.github_handle%>
+   Platoon: <%=student.platoon%>
+  </div>
+<%end%>

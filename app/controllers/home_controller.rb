@@ -5,7 +5,9 @@ class HomeController < ApplicationController
     @assignments = Assignment.all
     @assignment_names = []
     @assignments.each do |assignment|
-      @assignment_names << assignment.repo_name
+      if assignment.repo_name
+        @assignment_names << assignment.repo_name
+      end
     end
     @assignment_names = @assignment_names.uniq
     @student_progress = {}

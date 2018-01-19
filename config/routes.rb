@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   root to: 'home#index'
 
   post '/payload', to: 'assignments#payload', as: 'payload'
+  post '/payload2', to: 'assignments#payload2', as: 'payload2'
 
 
   resources :students do

@@ -1,12 +1,11 @@
-<%@assignments.each do |assignment|%>
-  <div>
-   Repository name: <%=assignment.repo_name%>
-   Github User: <%=assignment.student.github_handle%>
-  </div>
-<%end%>
-<%@students.each do |student|%>
-  <div>
-   Github handle: <%=student.github_handle%>
-   Platoon: <%=student.platoon%>
-  </div>
-<%end%>
+<table >
+  <tr>
+    <th></th>
+    <%@assignment_names.each do |repo_name|%>
+      <th><%=repo_name%></th>
+    <%end%>
+  </tr>
+  <%@students.each do |student|%>
+    <%= render 'student', student: student, assignment_names: @assignment_names, student_progress: @student_progress %>
+  <%end%>
+</table>

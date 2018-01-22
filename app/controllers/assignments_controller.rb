@@ -10,6 +10,7 @@ class AssignmentsController < ApplicationController
     end
     if push_notification['pull_request']
       github_handle = push_notification['pull_request']['user']['login']
+      platoon = push_notification['pull_request']['url'].split('/')[4]
       if push_notification['repository']
         repo_name = push_notification['repository']['name']
       else
@@ -19,16 +20,13 @@ class AssignmentsController < ApplicationController
       if !student 
         student = Student.new
         student.github_handle = github_handle
-        student.platoon = 'unknown'
       end
       assignment = student.assignments.find_by repo_name: repo_name
       if !assignment
         assignment = Assignment.new
         assignment.repo_name = repo_name
       end
-      if student.platoon == 'unknown'       #just for now
-        student.platoon = 'echoplatoon'     #just for now
-      end                                   #just for now
+      student.platoon = platoon
       student.save
       assignment.student = student
       assignment.completion = 'complete'

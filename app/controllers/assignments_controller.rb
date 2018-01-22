@@ -49,7 +49,7 @@ class AssignmentsController < ApplicationController
               paired_assignment = cohort_member.assignments.find_by repo_name: repo_name
               if !paired_assignment
                 paired_assignment = Assignment.new
-                assignment.repo_name = repo_name
+                paired_assignment.repo_name = repo_name
                 paired_assignment.student = cohort_member
               end
               paired_assignment.completion = 'complete'

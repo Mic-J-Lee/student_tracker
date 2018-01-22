@@ -1,21 +1,25 @@
 class AssignmentsController < ApplicationController
-  before_action :set_assignment, only: [:show]
-  skip_before_action :verify_authenticity_token, only: [:payload, :payload2]
-  rescue_from ActiveRecord::RecordNotFound, with: :incomplete
+  skip_before_action :verify_authenticity_token, only: [:payload]
 
   def payload
     push_notification = JSON.parse(request.body.read)
+    # Handle difference between single github events and github timeline batches
     if params['type'] == 'PullRequestEvent'
       push_notification = params['payload']
     end
+
     if push_notification['pull_request']
       github_handle = push_notification['pull_request']['user']['login']
       platoon = push_notification['pull_request']['url'].split('/')[4]
+
+      # Handle difference between single github events and github timeline batches
       if push_notification['repository']
         repo_name = push_notification['repository']['name']
       else
         repo_name = push_notification['pull_request']['base']['repo']['name']
       end
+
+      # Find student/assignment, create if needed
       student = Student.find_by github_handle: github_handle
       if !student 
         student = Student.new
@@ -26,13 +30,16 @@ class AssignmentsController < ApplicationController
         assignment = Assignment.new
         assignment.repo_name = repo_name
       end
+
+      # Save as complete
       student.platoon = platoon
       student.save
       assignment.student = student
       assignment.completion = 'complete'
       assignment.save
+
+      # Give pairing partner credit
       if student.first_name
-        platoon = student.platoon
         pr_title = push_notification['pull_request']['title']
         pr_title_without_pusher = pr_title.downcase.remove(student.first_name.downcase)
         cohort = Student.where(platoon: platoon)
@@ -43,34 +50,17 @@ class AssignmentsController < ApplicationController
               if !paired_assignment
                 paired_assignment = Assignment.new
                 assignment.repo_name = repo_name
+                paired_assignment.student = cohort_member
               end
-              paired_assignment.student = cohort_member
               paired_assignment.completion = 'complete'
               paired_assignment.save
             end
           end
         end
       end
+
     end
   end
-
-  def payload2
-    if params['type'] == 'PullRequestEvent'
-      pp params['payload']['pull_request']['base']['repo']['name']
-    end
-  end
-
-  def show
-  end
-
-  def incomplete
-    render 'incomplete'
-  end
-
-  private
-    def set_assignment
-      @assignment = Assignment.friendly.find(params[:id])
-    end
   
 end
 

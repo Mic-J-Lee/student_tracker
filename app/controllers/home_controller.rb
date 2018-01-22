@@ -25,7 +25,7 @@ class HomeController < ApplicationController
   private
 
     def get_platoon
-      @students = Student.where(platoon: params[:platoon])
+      @students = Student.where(platoon: params[:platoon]).where(first_name: true)
     end
 
 end

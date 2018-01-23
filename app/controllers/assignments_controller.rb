@@ -11,6 +11,7 @@ class AssignmentsController < ApplicationController
     if push_notification['pull_request']
       github_handle = push_notification['pull_request']['user']['login']
       platoon = push_notification['pull_request']['url'].split('/')[4]
+      should_send_comment = false
 
       # Handle difference between single github events and github timeline batches
       if push_notification['repository']
@@ -29,6 +30,7 @@ class AssignmentsController < ApplicationController
       if !assignment
         assignment = Assignment.new
         assignment.repo_name = repo_name
+        should_send_comment = true
       end
 
       # Save as complete
@@ -36,7 +38,13 @@ class AssignmentsController < ApplicationController
       student.save
       assignment.student = student
       assignment.completion = 'complete'
-      assignment.save
+      if assignment.save && should_send_comment
+        diff = HTTParty.get "#{push_notification['pull_request']['diff_url']}", headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"}
+        str1_markerstring = "diff --git a/"
+        str2_markerstring = "\n"
+        file_name = diff[/#{str1_markerstring}(.*?)#{str2_markerstring}/m, 1].split(' ')[0]
+        HTTParty.post("#{push_notification['pull_request']['url']}", body: {'body'=>":+1:", 'commit_id'=>"#{push_notification['pull_request']['head']['sha']}", 'path'=>"#{file_name}", 'position'=>1}.to_json, headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"})
+      end
 
       # Give pairing partner credit
       if student.first_name

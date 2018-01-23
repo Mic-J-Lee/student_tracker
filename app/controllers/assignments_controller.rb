@@ -39,7 +39,8 @@ class AssignmentsController < ApplicationController
       assignment.student = student
       assignment.completion = 'complete'
       if assignment.save && should_send_comment
-        diff = HTTParty.get "#{push_notification['pull_request']['diff_url']}", headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"}
+        get_url = push_notification['pull_request']['diff_url'].gsub(' ', '+')
+        diff = HTTParty.get "#{get_url}", headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"}
         str1_markerstring = "diff --git a/"
         str2_markerstring = "\n"
         file_name = diff.parsed_response[/#{str1_markerstring}(.*?)#{str2_markerstring}/m, 1].split(' ')[0]

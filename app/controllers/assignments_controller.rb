@@ -42,8 +42,8 @@ class AssignmentsController < ApplicationController
         get_url = push_notification['pull_request']['diff_url'].gsub(' ', '+')
         puts 'ARGHHHHH HEROKUUUUUU!ARGHHHHH HEROKUUUUUU!ARGHHHHH HEROKUUUUUU!ARGHHHHH HEROKUUUUUU!ARGHHHHH HEROKUUUUUU!ARGHHHHH HEROKUUUUUU!'
         diff = HTTParty.get "#{get_url}", headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"}
-        puts diff
-        puts diff.parsed_response[/#{str1_markerstring}(.*?)#{str2_markerstring}/m, 1]
+        puts "gh_u: #{ENV['GH_U']}"
+        puts "gh_t: #{ENV['GH_T']}"
         str1_markerstring = "diff --git a/"
         str2_markerstring = "\n"
         file_name = diff.parsed_response[/#{str1_markerstring}(.*?)#{str2_markerstring}/m, 1].split(' ')[0]

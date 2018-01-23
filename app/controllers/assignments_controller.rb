@@ -42,7 +42,7 @@ class AssignmentsController < ApplicationController
         diff = HTTParty.get "#{push_notification['pull_request']['diff_url']}", headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"}
         str1_markerstring = "diff --git a/"
         str2_markerstring = "\n"
-        file_name = diff[/#{str1_markerstring}(.*?)#{str2_markerstring}/m, 1].split(' ')[0]
+        file_name = diff.parsed_response[/#{str1_markerstring}(.*?)#{str2_markerstring}/m, 1].split(' ')[0]
         HTTParty.post("#{push_notification['pull_request']['url']}", body: {'body'=>":+1:", 'commit_id'=>"#{push_notification['pull_request']['head']['sha']}", 'path'=>"#{file_name}", 'position'=>1}.to_json, headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"})
       end
 

@@ -40,6 +40,7 @@ class AssignmentsController < ApplicationController
       assignment.completion = 'complete'
       if assignment.save && should_send_comment
         get_url = push_notification['pull_request']['diff_url'].gsub(' ', '+')
+        puts 'ARGHHHHH HEROKUUUUUU!'
         diff = HTTParty.get "#{get_url}", headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"}
         str1_markerstring = "diff --git a/"
         str2_markerstring = "\n"

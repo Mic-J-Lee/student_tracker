@@ -38,6 +38,7 @@ class AssignmentsController < ApplicationController
       student.save
       assignment.student = student
       assignment.completion = 'complete'
+      pairing_partners = []
       # Give pairing partner credit
       if student.first_name
         pr_title = push_notification['pull_request']['title']
@@ -54,12 +55,14 @@ class AssignmentsController < ApplicationController
               end
               paired_assignment.completion = 'complete'
               paired_assignment.save
+              pairing_partners << " and #{cohort_member.first_name}"
             end
           end
         end
       end
+      pairing_partners = pairing_partners.join
       if assignment.save && should_send_comment
-        HTTParty.post("#{push_notification['pull_request']['url']}", body: {'body'=>":+1:", 'commit_id'=>"#{push_notification['pull_request']['head']['sha']}", 'path'=>"README.md", 'position'=>1}.to_json, headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"})
+        HTTParty.post("#{push_notification['pull_request']['url']}", body: {'body'=>":+1: You#{pairing_partners} got credit!", 'commit_id'=>"#{push_notification['pull_request']['head']['sha']}", 'path'=>"README.md", 'position'=>1}.to_json, headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"})
       end
 
 

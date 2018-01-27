@@ -62,10 +62,8 @@ class AssignmentsController < ApplicationController
       end
       pairing_partners = pairing_partners.join
       if assignment.save && should_send_comment
-        HTTParty.post("#{push_notification['pull_request']['url']}", body: {'body'=>":+1: You#{pairing_partners} got credit!", 'commit_id'=>"#{push_notification['pull_request']['head']['sha']}", 'path'=>"README.md", 'position'=>1}.to_json, headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"})
+        HTTParty.post("#{push_notification['pull_request']['_links']['comments']['href']}", body: {'body'=>":+1: You#{pairing_partners} got credit!"}.to_json, headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"})
       end
-
-
     end
   end
   

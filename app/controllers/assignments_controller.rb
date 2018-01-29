@@ -2,10 +2,12 @@ class AssignmentsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:payload]
 
   def payload
+    old_event = false
     push_notification = JSON.parse(request.body.read)
     # Handle difference between single github events and github timeline batches
     if params['type'] == 'PullRequestEvent'
       push_notification = params['payload']
+      old_event = true
     end
 
     if push_notification['pull_request']
@@ -14,10 +16,10 @@ class AssignmentsController < ApplicationController
       should_send_comment = false
 
       # Handle difference between single github events and github timeline batches
-      if push_notification['repository']
-        repo_name = push_notification['repository']['name']
-      else
+      if old_event
         repo_name = push_notification['pull_request']['base']['repo']['name']
+      else
+        repo_name = push_notification['repository']['name']
       end
 
       # Find student/assignment, create if needed
@@ -30,7 +32,7 @@ class AssignmentsController < ApplicationController
       if !assignment
         assignment = Assignment.new
         assignment.repo_name = repo_name
-        should_send_comment = true
+        should_send_comment = true unless old_event || !student.first_name
       end
 
       # Save as complete
@@ -46,6 +48,7 @@ class AssignmentsController < ApplicationController
         cohort = Student.where(platoon: platoon)
         cohort.each do |cohort_member|
           if cohort_member.first_name
+
             if pr_title_without_pusher.include? cohort_member.first_name.downcase
               paired_assignment = cohort_member.assignments.find_by repo_name: repo_name
               if !paired_assignment
@@ -61,8 +64,13 @@ class AssignmentsController < ApplicationController
         end
       end
       pairing_partners = pairing_partners.join
+      if repo_name.downcase.include?('assessment')
+        body = "Thanks for your assessment, #{student.first_name}! Assessments take a while to grade, so please be patient."
+      else 
+        body = ":+1: You#{pairing_partners} got credit!"
+      end
       if assignment.save && should_send_comment
-        HTTParty.post("#{push_notification['pull_request']['_links']['comments']['href']}", body: {'body'=>":+1: You#{pairing_partners} got credit!"}.to_json, headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"})
+        HTTParty.post("#{push_notification['pull_request']['_links']['comments']['href']}", body: {'body'=> body}.to_json, headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"})
       end
     end
   end

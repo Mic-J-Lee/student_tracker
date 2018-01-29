@@ -40,8 +40,9 @@ class AssignmentsController < ApplicationController
       student.save
       assignment.student = student
       assignment.completion = 'complete'
-      pairing_partners = []
+      
       # Give pairing partner credit
+      pairing_partners = []
       if student.first_name
         pr_title = push_notification['pull_request']['title']
         pr_title_without_pusher = pr_title.downcase.remove(student.first_name.downcase)
@@ -65,8 +66,8 @@ class AssignmentsController < ApplicationController
       end
       pairing_partners = pairing_partners.join
       if repo_name.downcase.include?('assessment')
-        body = "Thanks for your assessment, #{student.first_name}! Assessments take a while to grade, so please be patient."
-      else 
+        body = "Thanks for your hard work, #{student.first_name}! Assessments can take a while to grade, so please be patient."
+      else
         body = ":+1: You#{pairing_partners} got credit!"
       end
       if assignment.save && should_send_comment

@@ -41,15 +41,9 @@ class AssignmentsController < ApplicationController
         cohort.each do |cohort_member|
           if cohort_member.first_name
             if pr_title_without_puller.include? cohort_member.first_name.downcase
-              paired_assignment = cohort_member.assignments.find_by repo_name: repo_name
-              if !paired_assignment
-                paired_assignment = Assignment.new
-                paired_assignment.repo_name = repo_name
-                paired_assignment.student = cohort_member
-              end
+              paired_assignment = cohort_member.assignments.find_or_create_by repo_name: repo_name
               paired_assignment.completion = 'complete'
-              paired_assignment.save
-              pairing_partners << " and #{cohort_member.first_name}"
+              pairing_partners << " and #{cohort_member.first_name}" if paired_assignment.save
             end
           end
         end

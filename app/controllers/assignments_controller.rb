@@ -36,10 +36,11 @@ class AssignmentsController < ApplicationController
       and_pairing_partners = ''
       if student.first_name
         pr_title_without_puller = push_notification['pull_request']['title'].downcase.remove(student.first_name.downcase)
+        branch_name_without_puller = push_notification['pull_request']['head']['ref'].downcase.remove(student.first_name.downcase)
         cohort = Student.where(platoon: platoon)
         cohort.each do |cohort_member|
           if cohort_member.first_name
-            if pr_title_without_puller.include? cohort_member.first_name.downcase
+            if pr_title_without_puller.include?(cohort_member.first_name.downcase) || branch_name_without_puller.include?(cohort_member.first_name.downcase)
               paired_assignment = cohort_member.assignments.find_or_create_by repo_name: repo_name
               paired_assignment.completion = 'complete'
               and_pairing_partners += " and #{cohort_member.first_name}" if paired_assignment.save

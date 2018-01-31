@@ -17,7 +17,7 @@ class AssignmentsController < ApplicationController
       platoon = push_notification['pull_request']['url'].split('/')[4]
       repo_name = push_notification['pull_request']['base']['repo']['name']
 
-      # Find/create student.  If new assignment and puller is an actual student, should_send_comment = true 
+      # Find/create student.  Should send comment if puller is an actual student and event just happened
       student = Student.find_or_create_by github_handle: github_handle
       assignment = student.assignments.find_by repo_name: repo_name
       if !assignment
@@ -33,28 +33,26 @@ class AssignmentsController < ApplicationController
       assignment.student = student
 
       # Give pairing partner credit
-      pairing_partners = []
+      and_pairing_partners = ''
       if student.first_name
-        pr_title = push_notification['pull_request']['title']
-        pr_title_without_puller = pr_title.downcase.remove(student.first_name.downcase)
+        pr_title_without_puller = push_notification['pull_request']['title'].downcase.remove(student.first_name.downcase)
         cohort = Student.where(platoon: platoon)
         cohort.each do |cohort_member|
           if cohort_member.first_name
             if pr_title_without_puller.include? cohort_member.first_name.downcase
               paired_assignment = cohort_member.assignments.find_or_create_by repo_name: repo_name
               paired_assignment.completion = 'complete'
-              pairing_partners << " and #{cohort_member.first_name}" if paired_assignment.save
+              and_pairing_partners += " and #{cohort_member.first_name}" if paired_assignment.save
             end
           end
         end
       end
-      pairing_partners = pairing_partners.join
 
       # Save and post comment on Pull Request
       if repo_name.downcase.include?('assessment')
         comment = "Thanks for your hard work, #{student.first_name}! Assessments can take a while to grade, so please be patient."
       else
-        comment = ":+1: You#{pairing_partners} got credit!"
+        comment = ":+1: You#{and_pairing_partners} got credit!"
       end
       if assignment.save && should_send_comment
         HTTParty.post("#{push_notification['pull_request']['_links']['comments']['href']}", body: {'body'=> comment}.to_json, headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"})

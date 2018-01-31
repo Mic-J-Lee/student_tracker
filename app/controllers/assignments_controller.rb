@@ -3,7 +3,9 @@ class AssignmentsController < ApplicationController
 
   def payload
     old_event = false
+    should_send_comment = false
     push_notification = JSON.parse(request.body.read)
+
     # Handle difference between single github events and github timeline batches
     if params['type'] == 'PullRequestEvent'
       push_notification = params['payload']
@@ -13,21 +15,10 @@ class AssignmentsController < ApplicationController
     if push_notification['pull_request']
       github_handle = push_notification['pull_request']['user']['login']
       platoon = push_notification['pull_request']['url'].split('/')[4]
-      should_send_comment = false
+      repo_name = push_notification['pull_request']['base']['repo']['name']
 
-      # Handle difference between single github events and github timeline batches
-      if old_event
-        repo_name = push_notification['pull_request']['base']['repo']['name']
-      else
-        repo_name = push_notification['repository']['name']
-      end
-
-      # Find student/assignment, create if needed
-      student = Student.find_by github_handle: github_handle
-      if !student 
-        student = Student.new
-        student.github_handle = github_handle
-      end
+      # Find/create student.  If new assignment and puller is an actual student, should_send_comment = true 
+      student = Student.find_or_create_by github_handle: github_handle
       assignment = student.assignments.find_by repo_name: repo_name
       if !assignment
         assignment = Assignment.new
@@ -35,22 +26,21 @@ class AssignmentsController < ApplicationController
         should_send_comment = true unless old_event || !student.first_name
       end
 
-      # Save as complete
+      # Set/update platoon of student, mark assignment complete, give assignment to student
       student.platoon = platoon
       student.save
-      assignment.student = student
       assignment.completion = 'complete'
-      
+      assignment.student = student
+
       # Give pairing partner credit
       pairing_partners = []
       if student.first_name
         pr_title = push_notification['pull_request']['title']
-        pr_title_without_pusher = pr_title.downcase.remove(student.first_name.downcase)
+        pr_title_without_puller = pr_title.downcase.remove(student.first_name.downcase)
         cohort = Student.where(platoon: platoon)
         cohort.each do |cohort_member|
           if cohort_member.first_name
-
-            if pr_title_without_pusher.include? cohort_member.first_name.downcase
+            if pr_title_without_puller.include? cohort_member.first_name.downcase
               paired_assignment = cohort_member.assignments.find_by repo_name: repo_name
               if !paired_assignment
                 paired_assignment = Assignment.new
@@ -65,17 +55,17 @@ class AssignmentsController < ApplicationController
         end
       end
       pairing_partners = pairing_partners.join
+
+      # Save and post comment on Pull Request
       if repo_name.downcase.include?('assessment')
-        body = "Thanks for your hard work, #{student.first_name}! Assessments can take a while to grade, so please be patient."
+        comment = "Thanks for your hard work, #{student.first_name}! Assessments can take a while to grade, so please be patient."
       else
-        body = ":+1: You#{pairing_partners} got credit!"
+        comment = ":+1: You#{pairing_partners} got credit!"
       end
       if assignment.save && should_send_comment
-        HTTParty.post("#{push_notification['pull_request']['_links']['comments']['href']}", body: {'body'=> body}.to_json, headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"})
+        HTTParty.post("#{push_notification['pull_request']['_links']['comments']['href']}", body: {'body'=> comment}.to_json, headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"})
       end
-    end
-  end
-  
+
+    end #of if push_notification['pull_request']
+  end #of #payload
 end
-
-

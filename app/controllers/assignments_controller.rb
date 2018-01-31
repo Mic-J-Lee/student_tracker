@@ -50,13 +50,22 @@ class AssignmentsController < ApplicationController
       end
 
       # Save and post comment on Pull Request
-      if repo_name.downcase.include?('assessment')
+      if repo_name.downcase.include? 'assessment'
         comment = "Thanks for your hard work, #{student.first_name}! Assessments can take a while to grade, so please be patient."
       else
         comment = ":+1: You#{and_pairing_partners} got credit!"
       end
       if assignment.save && should_send_comment
         HTTParty.post("#{push_notification['pull_request']['_links']['comments']['href']}", body: {'body'=> comment}.to_json, headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"})
+      end
+
+      # Special cases - group projects everyone gets credit
+      if ['boggle', 'ruduku'].include? repo_name
+        Student.where(platoon: platoon).each do |cohort_member|
+          group_assignment = cohort_member.assignments.find_or_create_by repo_name: repo_name
+          group_assignment.completion = 'complete'
+          group_assignment.save
+        end
       end
 
     end #of if push_notification['pull_request']

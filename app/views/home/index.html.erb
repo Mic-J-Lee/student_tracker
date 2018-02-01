@@ -1,19 +1,11 @@
-<table style="border-collapse: collapse">
-  <tr>
-    <th></th>
-    <th>%</th>
-    <%@assignment_names.each do |repo_name|%>
-      <th style="padding: 10px"><%=repo_name%></th>
-    <%end%>
-  </tr>
-  <%@students.each do |student|%>
-    <%completion_array = @student_progress[student.github_handle]%>
-    <%incomplete_length = (completion_array - ['complete']).length%>
-    <%grade = 100 * (1 - incomplete_length.to_f/(completion_array.length))%>
-    <tr>
-      <td style="font-weight: bold; padding-right: 5px"><%=student.first_name%></td> 
-      <td style="font-weight: bold; padding: 3px; border: 1px solid black"><%=grade.round(2)%></td> 
-      <%= render 'student', student: student, assignment_names: @assignment_names, student_progress: @student_progress %>
-    </tr>
-  <%end%>
-</table>
+<form>
+  <%= select_tag 'platoon', options_for_select(@platoons, @platoon), action: '/', method: 'get', onchange: 'this.form.submit();'%>
+</form>
+<div class='container'>
+  <div class='fixed-th-table-wrapper'>
+    <%= render 'table', assignment_names: @assignment_names, students: @students, student_progress: @student_progress %>
+  </div>
+  <div class='scrolled-td-table-wrapper'>
+    <%= render 'table', assignment_names: @assignment_names, students: @students, student_progress: @student_progress %>
+  </div>
+</div>

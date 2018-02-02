@@ -40,7 +40,9 @@ class AssignmentsController < ApplicationController
         cohort = Student.where(platoon: platoon)
         cohort.each do |cohort_member|
           if cohort_member.first_name
-            if pr_title_without_puller.include?(cohort_member.first_name.downcase) || branch_name_without_puller.include?(cohort_member.first_name.downcase)
+            pr_pair? = pr_title_without_puller.include?(cohort_member.first_name.downcase)
+            branch_pair? = branch_name_without_puller.include?(cohort_member.first_name.downcase)
+            if pr_pair? || branch_pair?
               paired_assignment = cohort_member.assignments.find_or_create_by repo_name: repo_name
               paired_assignment.completion = 'complete'
               and_pairing_partners += " and #{cohort_member.first_name}" if paired_assignment.save

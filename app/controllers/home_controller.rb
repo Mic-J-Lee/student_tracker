@@ -2,14 +2,17 @@ class HomeController < ApplicationController
   before_action :get_platoon, only: [:index]
 
   def index
-    @assignments = Assignment.all
+
+    #get list of all assignments that has active pull request
     @assignment_names = []
-    @assignments.each do |assignment|
-      if assignment.repo_name
+    Assignment.all.each do |assignment|
+      if assignment.repo_name && assignment.student && assignment.student.platoon == params[:platoon]
         @assignment_names << assignment.repo_name
       end
     end
     @assignment_names = @assignment_names.uniq
+
+    #make hash with each student's progress
     @student_progress = {}
     @students.each do |student|
       @student_progress[student.github_handle] = @assignment_names.map { |assignment_name|
@@ -20,6 +23,10 @@ class HomeController < ApplicationController
         end 
       }
     end
+
+    #list of platoons for dropdown
+    @platoons = Student.pluck(:platoon).uniq - [nil]
+    @platoon = params[:platoon]
   end
 
   private

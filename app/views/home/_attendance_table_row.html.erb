@@ -1,0 +1,11 @@
+<%@class_dates.each_with_index do |class_date, index|%>
+  <%if @student_attendance[student.first_name][index] == 'present'%>
+    <td class='a-td' title=<%=student.first_name%> style="padding: 8px 18px 3px 3px; background-color:lime; ">present</td>
+  <%elsif @student_attendance[student.first_name][index] == 'absent'%>
+    <td class='a-td' title=<%=student.first_name%> style="padding: 8px 18px 3px 3px; background-color:red; ">absent</td>
+  <%elsif @student_attendance[student.first_name][index] == 'tardy'%>
+    <td class='a-td' title=<%=student.first_name%> style="padding: 8px 18px 3px 3px; background-color:yellow; ">tardy</td>
+  <%else%>
+    <td class='a-td' title=<%=student.first_name%> style="padding: 8px 18px 3px 3px; background-color:grey; ">unknown</td>
+  <%end%>
+<%end%>

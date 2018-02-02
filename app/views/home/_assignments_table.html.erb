@@ -1,0 +1,19 @@
+<table class='a-table'>
+  <tr class='a-tr'>
+    <th class='a-th'></th>
+    <th class='a-th'>%</th>
+    <%@assignment_names.each do |repo_name|%>
+      <td class='a-td' style="padding: 10px; font-weight: bold"><%=repo_name%></td>
+    <%end%>
+  </tr>
+  <%@students.each do |student|%>
+    <%completion_array = @student_progress[student.github_handle]%>
+    <%incomplete_length = (completion_array - ['complete']).length%>
+    <%grade = 100 * (1 - incomplete_length.to_f/(completion_array.length))%>
+    <tr class='a-tr'>
+      <th class='a-th' style="font-weight: bold; padding-right: 5px"><%=student.first_name%></th> 
+      <th class='a-th' style="font-weight: bold; padding: 3px;"><%=grade.round(2)%></th> 
+      <%= render 'assignments_table_row', student: student %>
+    </tr>
+  <%end%>
+</table>

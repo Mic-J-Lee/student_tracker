@@ -3,7 +3,7 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 /* important styles */
 
-.container {
+.table-container {
    /* Attach fixed-th-table to this container,
       in order to layout fixed-th-table
       in the same way as scolled-td-table" */
@@ -50,19 +50,19 @@
    are below ".scrolling-td-wrapper table" borders
 */
 
-table {
+.a-table {
     border-spacing: 0;
 }
-td, th {
+.a-td, .a-th {
    border-style: solid;
    border-color: black;
    border-width: 1px 1px 0 0;
 }
-th:first-child {
+.a-th:first-child {
    border-left-width: 1px;
 }
-tr:last-child td,
-tr:last-child th {
+.a-tr:last-child td,
+.a-tr:last-child th {
    border-bottom-width: 1px;
 }
 

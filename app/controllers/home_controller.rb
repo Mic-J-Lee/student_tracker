@@ -10,7 +10,7 @@ class HomeController < ApplicationController
         @assignment_names << assignment.repo_name
       end
     end
-    @assignment_names = @assignment_names.uniq
+    @assignment_names = @assignment_names.uniq.reverse
 
     #make hash with each student's progress
     @student_progress = {}
@@ -25,8 +25,27 @@ class HomeController < ApplicationController
     end
 
     #list of platoons for dropdown
-    @platoons = Student.pluck(:platoon).uniq - [nil]
+    @platoons = Student.pluck(:platoon).uniq.compact
     @platoon = params[:platoon]
+
+    #attendance
+    attendance_records = AttendanceRecord.all.select{|attendance_record|attendance_record.student.platoon == params[:platoon]}
+    @class_dates = attendance_records.pluck(:date).uniq.compact.map { |date_time| date_time.to_date  }
+    @class_dates.uniq!.compact!
+    @student_attendance = {}
+    @students.each do |student|
+      @student_attendance[student.first_name] = @class_dates.map { |class_date|
+        attendance_records = student.attendance_records.select {|a| a.date.to_date == DateTime.now.to_date}
+        if attendance_records.first
+          if attendance_records.first.description
+            attendance_records.first.description
+          else
+            'unknown'
+          end
+        end
+      }
+    end
+
   end
 
   private

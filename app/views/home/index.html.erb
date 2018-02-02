@@ -1,11 +1,42 @@
 <form>
   <%= select_tag 'platoon', options_for_select(@platoons, @platoon), action: '/', method: 'get', onchange: 'this.form.submit();'%>
 </form>
-<div class='container'>
+
+<br>
+
+<div class='table-container'>
   <div class='fixed-th-table-wrapper'>
-    <%= render 'table', assignment_names: @assignment_names, students: @students, student_progress: @student_progress %>
+    <%=render 'assignments_table'%>
   </div>
   <div class='scrolled-td-table-wrapper'>
-    <%= render 'table', assignment_names: @assignment_names, students: @students, student_progress: @student_progress %>
+    <%=render 'assignments_table'%>
   </div>
 </div>
+
+<br>
+
+<div class='table-container'>
+  <div class='fixed-th-table-wrapper'>
+    <%=render 'attendance_table'%>
+  </div>
+  <div class='scrolled-td-table-wrapper'>
+    <%=render 'attendance_table'%>
+  </div>
+</div>
+
+<br>
+
+<%= form_tag({controller: 'students', action: 'attendance'}) %>
+  <input type="hidden" name="platoon" value=<%=@platoon%> />
+  <table>
+    <%@students.each do |student|%>
+      <%= render 'attendance_row', student: student %>
+    <%end%>
+  </table>
+  <div style='background-color: green; width: 70px'>Present</div>
+  <div style='background-color: yellow; width: 70px'>Tardy</div>
+  <div style='background-color: red; width: 70px'>Absent</div>
+  <input type="submit" value="Submit">
+</form>
+
+

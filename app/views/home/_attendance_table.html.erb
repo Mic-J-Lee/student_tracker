@@ -1,0 +1,19 @@
+<table class='a-table'>
+  <tr class='a-tr'>
+    <th class='a-th'></th>
+    <th class='a-th'>%</th>
+    <%@class_dates.each do |class_date|%>
+      <td class='a-td' style="padding: 10px; font-weight: bold"><%=class_date%></td>
+    <%end%>
+  </tr>
+  <%@students.each do |student|%>
+    <%attendance_array = @student_attendance[student.first_name]%>
+    <%incomplete_length = (attendance_array - ['present']).length%>
+    <%grade = 100 * (1 - incomplete_length.to_f/(attendance_array.length))%>
+    <tr class='a-tr'>
+      <th class='a-th' style="font-weight: bold; padding-right: 5px"><%=student.first_name%></th> 
+      <th class='a-th' style="font-weight: bold; padding: 3px;"><%=grade.round(2)%></th> 
+      <%= render 'attendance_table_row', student: student %>
+    </tr>
+  <%end%>
+</table>

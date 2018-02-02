@@ -1,3 +1,6 @@
-<td style='background-color:<%=color%>'>
-  <%=radio_button_tag (first_name), content%>
+<td>
+  <label class="radio-button-container" onmouseover='checkChildButton(this)'>
+    <input type="radio" name=<%=first_name%> value=<%=content%> <%=@student_attendance[first_name].first == content && 'checked'%>>
+    <span class='<%='checkmark ' + color%>'></span>
+  </label>
 </td>

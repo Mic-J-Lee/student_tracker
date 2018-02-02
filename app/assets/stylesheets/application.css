@@ -14,10 +14,6 @@
  *= require_self
  */
 
-#attendanceForm {
-  display: none;
-}
-
 #presentKey {
   background-color: green;
   width: 70px

@@ -15,10 +15,18 @@
 //= require_tree .
 
 function showHideAttendance() {
-    var x = document.getElementById("attendanceForm");
-    if (x.style.display === "none") {
-        x.style.display = "block";
-    } else {
-        x.style.display = "none";
-    }
+  const toggleMouseover = document.getElementById("toggleMouseover")
+  const attendanceForm = document.getElementById("attendanceForm")
+  attendanceForm.style.display === "none" ? attendanceForm.style.display = "block" : attendanceForm.style.display = "none"
+  toggleMouseover.parentNode.style.display === "none" ? toggleMouseover.parentNode.style.display = "block" : toggleMouseover.parentNode.style.display = "none"
+}
+
+function checkChildButton(div) {
+  const toggleMouseover = document.getElementById("toggleMouseover")
+  if (toggleMouseover.innerHTML == 'ON') div.firstElementChild.checked = true
+}
+
+function toggleMouseover(button) {
+  if (button.innerHTML == 'ON') button.innerHTML = 'OFF'
+  else button.innerHTML = 'ON'
 }

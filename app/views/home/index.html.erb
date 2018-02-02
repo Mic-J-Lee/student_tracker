@@ -27,7 +27,11 @@
 <br>
 
 <button onclick="showHideAttendance()">Take Attendance</button>
-<div id='attendanceForm'>
+<!-- style='display:none' must be inline for first click on button to work -->
+<div id='attendanceForm' style='display:none'>
+  <div style='display:none'>
+    Mouseover:<button id='toggleMouseover' onclick="toggleMouseover(this)">ON</button>
+  </div>
   <%= form_tag({controller: 'students', action: 'attendance'}) %>
     <input type="hidden" name="platoon" value=<%=@platoon%> />
     <table>
@@ -38,7 +42,7 @@
     <div id='presentKey'>Present</div>
     <div id='tardyKey'>Tardy</div>
     <div id='absentKey'>Absent</div>
-    <input type="submit" value="press Enter to submit">
+    <input type="submit" value="Submit">
   </form>
 </div>
 

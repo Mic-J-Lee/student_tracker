@@ -13,3 +13,12 @@
 //= require rails-ujs
 //= require turbolinks
 //= require_tree .
+
+function showHideAttendance() {
+    var x = document.getElementById("attendanceForm");
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+}

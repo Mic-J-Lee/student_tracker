@@ -1,7 +1,7 @@
   <%@assignment_names.each_with_index do |assignment_name, index|%>
     <%if @student_progress[student.github_handle][index] == 'complete'%>
-      <td class='a-td' title=<%=student.first_name%> style="padding: 8px 18px 3px 3px; background-color:lime; ">complete</td>
+      <td class='a-td' title=<%=student.first_name%> style="background-color:lime">complete</td>
     <%else%>
-      <td class='a-td' title=<%=student.first_name%> style="padding: 8px 18px 3px 3px; background-color:red; ">incomplete</td>
+      <td class='a-td' title=<%=student.first_name%> style="background-color:red">incomplete</td>
     <%end%>
   <%end%>

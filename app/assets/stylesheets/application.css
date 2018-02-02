@@ -13,3 +13,30 @@
  *= require_tree .
  *= require_self
  */
+
+#attendanceForm {
+  display: none;
+}
+
+#presentKey {
+  background-color: green;
+  width: 70px
+}
+
+#tardyKey {
+  background-color: yellow;
+  width: 70px
+}
+
+#absentKey {
+  background-color: red;
+  width: 70px
+}
+
+.bold {
+  font-weight: bold
+}
+
+.centered {
+  text-align: center
+}

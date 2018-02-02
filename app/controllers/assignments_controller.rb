@@ -4,18 +4,18 @@ class AssignmentsController < ApplicationController
   def payload
     old_event = false
     should_send_comment = false
-    push_notification = JSON.parse(request.body.read)
+    @push_notification = JSON.parse(request.body.read)
 
     # Handle difference between single github events and github timeline batches
     if params['type'] == 'PullRequestEvent'
-      push_notification = params['payload']
+      @push_notification = params['payload']
       old_event = true
     end
 
-    if push_notification['pull_request']
-      github_handle = push_notification['pull_request']['user']['login']
-      platoon = push_notification['pull_request']['url'].split('/')[4]
-      repo_name = push_notification['pull_request']['base']['repo']['name']
+    if @push_notification['pull_request']
+      github_handle = @push_notification['pull_request']['user']['login']
+      platoon = @push_notification['pull_request']['url'].split('/')[4]
+      repo_name = @push_notification['pull_request']['base']['repo']['name']
 
       # Find/create student.  Should send comment if puller is an actual student and event just happened
       student = Student.find_or_create_by github_handle: github_handle
@@ -35,14 +35,10 @@ class AssignmentsController < ApplicationController
       # Give pairing partner credit
       and_pairing_partners = ''
       if student.first_name
-        pr_title_without_puller = push_notification['pull_request']['title'].downcase.remove(student.first_name.downcase)
-        branch_name_without_puller = push_notification['pull_request']['head']['ref'].downcase.remove(student.first_name.downcase)
         cohort = Student.where(platoon: platoon)
         cohort.each do |cohort_member|
           if cohort_member.first_name
-            has_pr_pair = pr_title_without_puller.include?(cohort_member.first_name.downcase)
-            has_branch_pair = branch_name_without_puller.include?(cohort_member.first_name.downcase)
-            if has_pr_pair || has_branch_pair
+            if has_pr_pair(student, cohort_member) || has_branch_pair(student, cohort_member)
               paired_assignment = cohort_member.assignments.find_or_create_by repo_name: repo_name
               paired_assignment.completion = 'complete'
               and_pairing_partners += " and #{cohort_member.first_name}" if paired_assignment.save
@@ -58,7 +54,7 @@ class AssignmentsController < ApplicationController
         comment = ":+1: You#{and_pairing_partners} got credit!"
       end
       if assignment.save && should_send_comment
-        HTTParty.post("#{push_notification['pull_request']['_links']['comments']['href']}", body: {'body'=> comment}.to_json, headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"})
+        HTTParty.post("#{@push_notification['pull_request']['_links']['comments']['href']}", body: {'body'=> comment}.to_json, headers: {'User-Agent'=> "#{ENV['GH_U']}", 'Authorization'=> "token #{ENV['GH_T']}"})
       end
 
       # Special cases - group projects everyone gets credit
@@ -70,6 +66,16 @@ class AssignmentsController < ApplicationController
         end
       end
 
-    end #of if push_notification['pull_request']
+    end #of if @push_notification['pull_request']
   end #of #payload
+
+  def has_pr_pair(student, cohort_member)
+    pr_title_without_puller = @push_notification['pull_request']['title'].downcase.remove(student.first_name.downcase)
+    pr_title_without_puller.include?(cohort_member.first_name.downcase)
+  end
+
+  def has_branch_pair(student, cohort_member)
+    branch_name_without_puller = @push_notification['pull_request']['head']['ref'].downcase.remove(student.first_name.downcase)
+    branch_name_without_puller.include?(cohort_member.first_name.downcase)
+  end
 end

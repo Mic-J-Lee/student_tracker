@@ -26,17 +26,19 @@
 
 <br>
 
-<%= form_tag({controller: 'students', action: 'attendance'}) %>
-  <input type="hidden" name="platoon" value=<%=@platoon%> />
-  <table>
-    <%@students.each do |student|%>
-      <%= render 'attendance_row', student: student %>
-    <%end%>
-  </table>
-  <div style='background-color: green; width: 70px'>Present</div>
-  <div style='background-color: yellow; width: 70px'>Tardy</div>
-  <div style='background-color: red; width: 70px'>Absent</div>
-  <input type="submit" value="Submit">
-</form>
-
+<button onclick="showHideAttendance()">Take Attendance</button>
+<div id='attendanceForm'>
+  <%= form_tag({controller: 'students', action: 'attendance'}) %>
+    <input type="hidden" name="platoon" value=<%=@platoon%> />
+    <table>
+      <%@students.each do |student|%>
+        <%= render 'attendance_row', student: student %>
+      <%end%>
+    </table>
+    <div id='presentKey'>Present</div>
+    <div id='tardyKey'>Tardy</div>
+    <div id='absentKey'>Absent</div>
+    <input type="submit" value="press Enter to submit">
+  </form>
+</div>
 

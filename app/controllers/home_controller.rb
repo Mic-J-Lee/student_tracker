@@ -12,8 +12,9 @@ class HomeController < ApplicationController
     end
     @assignment_names = @assignment_names.uniq.reverse
 
-    #make hash with each student's progress
+    #make hash with each student's progress, calculate grades
     @student_progress = {}
+    @student_grades = {}
     @students.each do |student|
       @student_progress[student.github_handle] = @assignment_names.map { |assignment_name|
         if student.assignments.find_by(repo_name: assignment_name)
@@ -22,10 +23,13 @@ class HomeController < ApplicationController
           'incomplete'
         end 
       }
+      progress = @student_progress[student.github_handle]
+      incomplete_length = (progress - ['complete']).length
+      @student_grades[student.github_handle] = (100 * (1 - incomplete_length.to_f/progress.length)).round(2)
     end
 
     #list of platoons for dropdown
-    @platoons = Student.pluck(:platoon).uniq.compact
+    @platoons = [''] + Student.pluck(:platoon).uniq.compact
     @platoon = params[:platoon]
 
     #attendance
@@ -34,18 +38,18 @@ class HomeController < ApplicationController
     if @class_dates.uniq!
       @class_dates.compact!
     end
+    @attendance_percentages = {}
     @student_attendance = {}
     @students.each do |student|
       @student_attendance[student.first_name] = @class_dates.map { |class_date|
         attendance_records = student.attendance_records.select {|a| a.date.to_date == class_date}
         if attendance_records.first
-          if attendance_records.first.description
-            attendance_records.first.description
-          else
-            'unknown'
-          end
+          attendance_records.first.description || 'unknown'
         end
       }
+      attendance = @student_attendance[student.first_name]
+      absent_length = attendance.count('absent')
+      @attendance_percentages[student.first_name] = (100 * (1 - absent_length.to_f/attendance.length)).round(2)
     end
 
   end

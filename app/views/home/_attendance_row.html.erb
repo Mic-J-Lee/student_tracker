@@ -1,6 +1,5 @@
 <tr>
-  <td style='font-weight: bold;'><%=student.first_name%> </td>
-
+  <td class='bold'><%=student.first_name%> </td>
   <%=render 'attendance_radio_button', first_name: student.first_name, color: 'green', content: 'present'%>
   <%=render 'attendance_radio_button', first_name: student.first_name, color: 'yellow', content: 'tardy'%>
   <%=render 'attendance_radio_button', first_name: student.first_name, color: 'red', content: 'absent'%>

@@ -37,7 +37,7 @@ class HomeController < ApplicationController
     @student_attendance = {}
     @students.each do |student|
       @student_attendance[student.first_name] = @class_dates.map { |class_date|
-        attendance_records = student.attendance_records.select {|a| a.date.to_date == DateTime.now.to_date}
+        attendance_records = student.attendance_records.select {|a| a.date.to_date == class_date}
         if attendance_records.first
           if attendance_records.first.description
             attendance_records.first.description

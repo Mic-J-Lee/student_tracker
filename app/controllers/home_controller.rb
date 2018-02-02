@@ -31,7 +31,7 @@ class HomeController < ApplicationController
     #attendance
     attendance_records = AttendanceRecord.all.select{|attendance_record|attendance_record.student.platoon == params[:platoon]}
     @class_dates = attendance_records.pluck(:date).uniq.compact.map { |date_time| date_time.to_date  }
-    @class_dates.uniq!.compact!
+    @class_dates && @class_dates.uniq!.compact!
     @student_attendance = {}
     @students.each do |student|
       @student_attendance[student.first_name] = @class_dates.map { |class_date|

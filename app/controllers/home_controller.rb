@@ -51,6 +51,7 @@ class HomeController < ApplicationController
       absent_length = attendance.count('absent')
       @attendance_percentages[student.first_name] = (100 * (1 - absent_length.to_f/attendance.length)).round(2)
     end
+    @date_today = DateTime.now.to_date
 
   end
 

@@ -15,15 +15,14 @@
 //= require_tree .
 
 function showHideAttendance() {
-  const toggleMouseover = document.getElementById("toggleMouseover")
   const attendanceForm = document.getElementById("attendanceForm")
-  attendanceForm.style.display === "none" ? attendanceForm.style.display = "block" : attendanceForm.style.display = "none"
-  toggleMouseover.parentNode.style.display === "none" ? toggleMouseover.parentNode.style.display = "block" : toggleMouseover.parentNode.style.display = "none"
+  attendanceForm.style.opacity == 0 ? attendanceForm.style.opacity = 1 : attendanceForm.style.opacity = 0
 }
 
 function checkChildButton(div) {
+  const attendanceForm = document.getElementById("attendanceForm")
   const toggleMouseover = document.getElementById("toggleMouseover")
-  if (toggleMouseover.innerHTML == 'ON') div.firstElementChild.checked = true
+  if (toggleMouseover.innerHTML == 'ON' && attendanceForm.style.opacity == 1) div.firstElementChild.checked = true
 }
 
 function toggleMouseover(button) {

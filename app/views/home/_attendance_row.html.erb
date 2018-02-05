@@ -1,5 +1,5 @@
-<tr>
-  <td class='bold vertical-center'><%=student.first_name%> </td>
+<tr class=<%=@student_attendance[student.first_name].first == 'unknown' && 'opaque'%>>
+  <td class='bold white'><%=student.first_name%> </td>
   <%=render 'attendance_radio_button', first_name: student.first_name, color: 'green', content: 'present'%>
   <%=render 'attendance_radio_button', first_name: student.first_name, color: 'yellow', content: 'tardy'%>
   <%=render 'attendance_radio_button', first_name: student.first_name, color: 'red', content: 'absent'%>

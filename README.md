@@ -1,12 +1,9 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
+To test locally, add a webhook and get ngrok setup https://developer.github.com/webhooks/configuring/
 
 * Ruby version
-
+2.5.0
 * System dependencies
 
 * Configuration

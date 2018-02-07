@@ -1,0 +1,16 @@
+<table class='a-table'>
+  <tr class='a-tr'>
+    <th class='a-th'></th>
+    <th class='a-th'>%</th>
+    <%@class_dates.each do |class_date|%>
+      <td class='a-td bold centered'><%=class_date%></td>
+    <%end%>
+  </tr>
+  <%@students.each do |student|%>
+    <tr class='a-tr'>
+      <th class='a-th'><%=student.first_name%></th>
+      <th class='a-th'><%=@attendance_percentages[student.first_name]%></th>
+      <%= render 'attendance_table_row', student: student %>
+    </tr>
+  <%end%>
+</table>

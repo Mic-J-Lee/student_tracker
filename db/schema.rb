@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180131214902) do
+ActiveRecord::Schema.define(version: 20180201172633) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,15 @@ ActiveRecord::Schema.define(version: 20180131214902) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["student_id"], name: "index_assignments_on_student_id"
+  end
+
+  create_table "attendance_records", force: :cascade do |t|
+    t.datetime "date"
+    t.bigint "student_id"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["student_id"], name: "index_attendance_records_on_student_id"
   end
 
   create_table "friendly_id_slugs", force: :cascade do |t|
@@ -45,4 +54,5 @@ ActiveRecord::Schema.define(version: 20180131214902) do
     t.string "platoon"
   end
 
+  add_foreign_key "attendance_records", "students"
 end

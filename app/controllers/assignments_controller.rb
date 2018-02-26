@@ -17,6 +17,9 @@ class AssignmentsController < ApplicationController
       platoon = @push_notification['pull_request']['url'].split('/')[4]
       repo_name = @push_notification['pull_request']['base']['repo']['name']
 
+      # Stop if assignments do not require pull requests
+      return if repo_name.include? 'http'
+
       # Find/create student.  Should send comment if puller is an actual student and event just happened
       student = Student.find_or_create_by github_handle: github_handle
       assignment = student.assignments.find_by repo_name: repo_name
@@ -67,6 +70,24 @@ class AssignmentsController < ApplicationController
       end
 
     end #of if @push_notification['pull_request']
+
+    # Take Attendance
+    if params[:Timestamp]
+      date = params[:Timestamp][0..9]
+      time = params[:Timestamp][11..18]
+      date_time = date + ' ' + time
+      cohort = Student.where(platoon: 'echoplatoon') # brittle. add platoon to form?
+      cohort.each do |cohort_member|
+        if cohort_member.first_name
+          if params[:Name].downcase.include? cohort_member.first_name.downcase
+            attendance_record = cohort_member.attendance_records.find_or_create_by date: date_time
+            attendance_record.description = 'present'
+            attendance_record.save
+          end
+        end
+      end
+    end
+
   end #of #payload
 
   def has_pr_pair(student, cohort_member)

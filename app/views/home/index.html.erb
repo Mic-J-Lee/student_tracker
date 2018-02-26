@@ -4,15 +4,36 @@
 
 <br>
 
+<br>
+
+<div class='table-container'>
+  <div class='fixed-th-table-wrapper'>
+    <%=render 'assignments_table'%>
+  </div>
+  <div class='scrolled-td-table-wrapper'>
+    <%=render 'assignments_table'%>
+  </div>
+</div>
+
+<br>
+
+<div class='table-container'>
+  <div class='fixed-th-table-wrapper'>
+    <%=render 'attendance_table'%>
+  </div>
+  <div class='scrolled-td-table-wrapper'>
+    <%=render 'attendance_table'%>
+  </div>
+</div>
+
+<br>
+
 <button onclick="showHideAttendance()">Take Attendance</button>
 
 <br>
-<br>
+
 <!-- style must be inline for first click on button to work -->
 <div id='attendanceForm' style="opacity:0">
-  <div class='white attendance'>
-    Mouseover:<button id='toggleMouseover' onclick="toggleMouseover(this)">OFF</button>
-  </div>
   <%= form_tag({controller: 'students', action: 'attendance'}) %>
     <input type="hidden" name="platoon" value=<%=@platoon%> />
     <table>
@@ -24,27 +45,3 @@
     <input type="submit" value="Submit">
   </form>
 </div>
-
-<br>
-
-<div class='table-container'>
-  <div class='fixed-th-table-wrapper'>
-    <%=render 'attendance_table'%>
-  </div>
-  <div class='scrolled-td-table-wrapper'>
-    <%=render 'attendance_table'%>
-  </div>
-</div>
-
-<br>
-
-<div class='table-container'>
-  <div class='fixed-th-table-wrapper'>
-    <%=render 'assignments_table'%>
-  </div>
-  <div class='scrolled-td-table-wrapper'>
-    <%=render 'assignments_table'%>
-  </div>
-</div>
-
-<br>

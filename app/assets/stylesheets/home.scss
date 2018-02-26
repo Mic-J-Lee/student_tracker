@@ -2,18 +2,20 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-tr td { opacity: .5; }
+
+tr td { opacity: .8; }
 tr.opaque td { opacity: 1; }
 tr:hover td {
   opacity: 1;
 }
+
 body {
-  background-image: image-url("mountain-sun-river-sky-cloud.jpg");
+  /*background-image: image-url("mountain-sun-river-sky-cloud.jpg");*/
   background-size: cover;
   background-repeat: no-repeat;
 }
 .white {
-  background-color: white
+  background-color: white;
 }
 .attendance {
   width: 212px;

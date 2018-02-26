@@ -18,14 +18,3 @@ function showHideAttendance() {
   const attendanceForm = document.getElementById("attendanceForm")
   attendanceForm.style.opacity == 0 ? attendanceForm.style.opacity = 1 : attendanceForm.style.opacity = 0
 }
-
-function checkChildButton(div) {
-  const attendanceForm = document.getElementById("attendanceForm")
-  const toggleMouseover = document.getElementById("toggleMouseover")
-  if (toggleMouseover.innerHTML == 'ON' && attendanceForm.style.opacity == 1) div.firstElementChild.checked = true
-}
-
-function toggleMouseover(button) {
-  if (button.innerHTML == 'ON') button.innerHTML = 'OFF'
-  else button.innerHTML = 'ON'
-}

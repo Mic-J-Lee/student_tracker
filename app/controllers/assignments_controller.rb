@@ -53,6 +53,8 @@ class AssignmentsController < ApplicationController
       # Save and post comment on Pull Request
       if repo_name.downcase.include? 'assessment'
         comment = "Thanks for your hard work, #{student.first_name}! Assessments can take a while to grade, so please be patient."
+      elsif repo_name.downcase.include? 'final_capstone'
+        should_send_comment = false
       else
         comment = ":+1: You#{and_pairing_partners} got credit!"
       end
